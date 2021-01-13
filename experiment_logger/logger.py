@@ -3,7 +3,7 @@ import pathlib
 import subprocess
 
 from dataclasses import dataclass
-import json
+import pickle
 from experiment_logger.params import AbstractParams
 
 class Logger:
@@ -54,7 +54,8 @@ class Logger:
         self.params = params
         os.mkdir(self.params.output_folder_path)
         self.watches = Watches()
-
+        if git:
+            self.save_git_snaptshot()
         # Last thing we do is to save the params.
         self.params.save_as_json()
 
@@ -85,7 +86,7 @@ class Logger:
                 f.writelines(git_diff)
 
     def on_experiment_end(self):
-        self.watches.save_as_json(self.params.output_folder_path)
+        self.watches.save_as_pickle(self.params.output_folder_path)
 
 
 @dataclass
@@ -93,7 +94,7 @@ class Watches:
 
     name:str = 'watches'
 
-    def save_as_json(self, folder_name: str):
+    def save_as_pickle(self, folder_name: str):
         """
         Save watched variables to json.
 
@@ -104,5 +105,11 @@ class Watches:
         """
         d = self.__dict__
         sorted_dict = {k: d[k] for k in sorted(d.keys())}
-        file_path = os.path.join(folder_name, self.name + '.json')
-        json.dump(sorted_dict, open(file_path, 'w'), indent=4)
+        file_path = os.path.join(folder_name, self.name)
+        with open(file_path, 'wb') as f:
+            pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
+
+    @staticmethod
+    def load_watches(path: str):
+        with open(path, 'rb') as f:
+            return pickle.load(f)

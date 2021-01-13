@@ -22,8 +22,8 @@ class AbstractParams:
 
     @dataclass  # IMPORTANT!
     class ExperimentParams(AbstractParams):
-        src_path = 'here'  # Required
-        output_folder_name_prefix = 'exp_2'  # Required
+        src_path: str = 'here'  # Required and also the typing is required
+        output_folder_name_prefix: str = 'exp_2'  # Required and also the typing is required
         lr: float = 0.3
         n_layers: int = 100
         activation: str = 'relu'
@@ -102,3 +102,13 @@ class AbstractParams:
         kwargs = {key: value for key, value in input_params.__dict__.items() if value is not None}
         params = cls(**kwargs)
         return params
+
+
+@dataclass
+class SampleParams(AbstractParams):
+    src_path: str = 'bdddl'
+    output_folder_name_prefix: str = 'nin'
+
+if __name__ == "__main__":
+    p = SampleParams()
+    print(p.to_dict())
