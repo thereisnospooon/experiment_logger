@@ -4,7 +4,7 @@ import subprocess
 
 from dataclasses import dataclass
 import json
-from src.params import AbstractParams
+from experiment_logger.params import AbstractParams
 
 class Logger:
     """
