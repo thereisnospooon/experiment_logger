@@ -36,6 +36,7 @@ class Logger:
         loss = calc_loss()
         logger.watches.losses.append(loss)
         logger.watches.grads['blublu'] = current_grads
+    logger.on_experiment_end()  # Save watches 
 
     """
     def __init__(self, params: AbstractParams, git=True):
@@ -96,7 +97,7 @@ class Watches:
 
     def save_as_pickle(self, folder_name: str):
         """
-        Save watched variables to json.
+        Save watched variables to pickle.
 
         Parameters
         ----------
