@@ -95,6 +95,12 @@ class Watches:
 
     name:str = 'watches'
 
+    def var_names(self):
+        return self.to_dict().keys()
+
+    def to_dict(self):
+        return self.__dict__
+
     def save_as_pickle(self, folder_name: str):
         """
         Save watched variables to pickle.
