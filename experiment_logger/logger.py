@@ -35,7 +35,7 @@ class Logger:
         # ... Do some stuff
         loss = calc_loss()
         logger.watches.losses.append(loss)
-        logger.watches.grads['blublu'] = current_grads
+        logger.watches.grads['dense_layer'] = current_grads
     logger.on_experiment_end()  # Save watches 
 
     """
