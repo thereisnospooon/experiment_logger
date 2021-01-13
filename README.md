@@ -2,7 +2,7 @@
 
 Project for logging experiments.
 Should support - 
-- [ ] Knobs (parameters) of the experiment.
+- [x] Knobs (parameters) of the experiment.
 - [ ] Watches: results of the experiment we would like to follow.
 - [ ] Saving plots.
 - [ ] Saving general experient objects.

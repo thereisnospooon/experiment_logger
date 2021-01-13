@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Any
 from dataclasses import dataclass
 import os
 import json
@@ -21,7 +20,7 @@ class AbstractParams:
     from experiment_logger import Params
 
     @dataclass  # IMPORTANT!
-    class ExperimentParams(Params):
+    class ExperimentParams(AbstractParams):
         src_path = 'here'  # Required
         output_folder_name_prefix = 'exp_2'  # Required
         lr: float = 0.3
@@ -34,7 +33,9 @@ class AbstractParams:
     >> p.__dict__
     {'lr': 0.3
     'n_layers': 10
-    'activation': 'relu'}
+    'activation': 'relu',
+    'src_path': 'here',
+    ...}
 
     ---------------------------------
     In the above example, saving the params to p.output_folder_path
@@ -45,6 +46,7 @@ class AbstractParams:
     start_time_str : str = None
     output_folder_name: str = None
     output_folder_path: str = None
+    params_name = 'params'
 
     def __post_init__(self):
         self.start_time_str = datetime.today().strftime('%d_%m_%Y__%H_%M_%S')
@@ -54,9 +56,19 @@ class AbstractParams:
     def to_dict(self):
         return self.__dict__
 
-    def to_json(self, file_path: str = None):
+    def save_as_json(self, file_path: str = None):
+        """
+        Save parameters to json.
+
+        Parameters
+        ----------
+        file_path : str, optional
+            If None, default behaviour is to save to "<self.output_folder_path>/self.params_name + '.json'"
+        """
         d = self.to_dict()
         sorted_dict = {k: d[k] for k in sorted(d.keys())}
+        if not file_path:
+            file_path = os.path.join(self.output_folder_path, self.params_name + '.json')
         json.dump(sorted_dict, open(file_path, 'w'), indent=4)
 
     @classmethod
