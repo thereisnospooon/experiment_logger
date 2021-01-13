@@ -33,7 +33,7 @@ class Logger:
     # Run actual experiment
     for iter in range(n_iterations):
         # ... Do some stuff
-        loss = calc_loss()
+        loss, current_grads = calc_loss_and_grads()
         logger.watches.losses.append(loss)
         logger.watches.grads['dense_layer'] = current_grads
     logger.on_experiment_end()  # Save watches 
