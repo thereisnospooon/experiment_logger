@@ -17,6 +17,7 @@ class AbstractParams:
     output_folder_name_prefix: str - prefix of subfolder where experiment data should be saved.
 
     Usage - 
+
     from experiment_logger import Params
 
     @dataclass  # IMPORTANT!

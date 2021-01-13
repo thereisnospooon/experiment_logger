@@ -1,4 +1,7 @@
 import os
+import pathlib
+import subprocess
+
 from dataclasses import dataclass
 import json
 from src.params import AbstractParams
@@ -26,6 +29,8 @@ class Logger:
     # Init watches
     logger.watches.losses = []
     logger.watches.grads = {}
+
+    # Run actual experiment
     for iter in range(n_iterations):
         # ... Do some stuff
         loss = calc_loss()
@@ -48,8 +53,36 @@ class Logger:
         """
         self.params = params
         os.mkdir(self.params.output_folder_path)
-        self.params.save_as_json()
         self.watches = Watches()
+
+        # Last thing we do is to save the params.
+        self.params.save_as_json()
+
+    def save_git_snaptshot(self):
+        """
+        Save git branch and commit hash to params.
+        Save diff to git patch file.
+        """
+        # Get the absolute path to your repository, 
+        # no matter where you are running this code from.
+        repo_path = self.params.src_path
+
+        git_branch = subprocess.check_output(
+            ["git", "-C", repo_path, "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode('UTF-8')
+
+        git_commit_short_hash = subprocess.check_output(
+            ["git", "-C", repo_path, "describe", "--always"]).strip().decode('UTF-8')
+
+        git_diff = subprocess.check_output(
+            ["git", "-C", repo_path, "diff"]).decode('UTF-8')  # notice no strip!
+
+        self.params.git_branch = git_branch
+        self.params.git_commit_short_hash = git_commit_short_hash
+
+        if len(git_diff) > 0:
+            git_diff_filepath = os.path.join(self.params.output_folder_path, 'git_diff.patch')
+            with open(git_diff_filepath, 'w') as f:
+                f.writelines(git_diff)
 
     def on_experiment_end(self):
         self.watches.save_as_json(self.params.output_folder_path)
