@@ -103,7 +103,6 @@ class Watches:
         file_path : str
             path to folder to save watches to.
         """
-        d = self.__dict__
         file_path = os.path.join(folder_name, self.name)
         with open(file_path, 'wb') as f:
             pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
