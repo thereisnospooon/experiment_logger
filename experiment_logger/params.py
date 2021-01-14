@@ -74,7 +74,35 @@ class AbstractParams:
 
     @classmethod
     def from_dict(cls, d: dict):
-        return cls(**d)
+        """
+        Generate an instance of this 
+        (or inherited) data class.
+
+        Parameters
+        ----------
+        d : dict
+
+        Returns
+        -------
+        An instance of a class that inherits from AbstractParams
+        with all the fields as d.
+        If d has keys that are not in the initial parameters of the class
+        they will be added also. This means that if d contains the basic params required
+        for the class it can then hold every other value also and it will be added to the new 
+        instance.
+        """
+        init_params = cls.__dataclass_fields__.keys()
+        init_fields = {}
+        post_init_fields = {}
+        for k, v in d.items():
+            if k in init_params:
+                init_fields[k] = v
+            else:
+                post_init_fields[k] = v
+        new = cls(**init_fields)
+        for k, v in post_init_fields.items():
+            new.__setattr__(k, v)
+        return new
 
     @classmethod
     def from_json(cls, file_path: str):
